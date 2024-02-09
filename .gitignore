@@ -1,4 +1,4 @@
-fonctions/__pycache__
-__pycache__
+fonctions/__pycache__/*
+__pycache__/*
 .vscode/*
 .idea/*
