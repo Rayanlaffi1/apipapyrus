@@ -17,6 +17,23 @@ from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.layers import Dense, Dropout
 from fonctions.model import preprocess_sentence, get_response, getDataModel
 
+import pkgutil
+def list_imported_packages():
+    imported_packages = set()
+    for importer, modname, ispkg in pkgutil.walk_packages():
+        try:
+            __import__(modname)
+            imported_packages.add(modname)
+        except Exception as e:
+            print(f"Error importing {modname}: {e}")
+    return imported_packages
+
+if __name__ == "__main__":
+    imported_packages = list_imported_packages()
+    print("Modules and packages imported in this script:")
+    for package in sorted(imported_packages):
+        print(package)
+
 app = Flask(__name__)
 
 CORS(app, origins="*")
