@@ -16,7 +16,7 @@ from fonctions.model import getDataModel
 nltk.download("punkt")
 nltk.download("wordnet")
 
-train_X, train_y = getDataModel("./json/intents.json")
+train_X, train_y = getDataModel()
 
 # définition de quelques paramètres
 input_shape = (len(train_X[0]),)

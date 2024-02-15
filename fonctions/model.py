@@ -13,15 +13,20 @@ import random
 from nltk.stem import WordNetLemmatizer
 from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
+import pymongo
+import os
+from dotenv import load_dotenv
 nltk.download("punkt")
 nltk.download("wordnet")
 
-
-def getDataModel(chemin_intent_file):
-    with open(chemin_intent_file, 'r', encoding='utf-8') as file:
-        data = json.load(file)
-
-    intents = data["intents"]
+def getDataModel():
+    load_dotenv()
+    client_string = os.getenv("MONGODB_URL")
+    db_string = os.getenv("DB_NAME")
+    client = pymongo.MongoClient(client_string)
+    db = client[db_string]
+    collectionintents = db["intents"] 
+    intents = collectionintents.find({})
 
     lemmatizer = WordNetLemmatizer()
     # création des listes
@@ -32,7 +37,7 @@ def getDataModel(chemin_intent_file):
     # parcourir avec une boucle For toutes les intentions
     # tokéniser chaque pattern et ajouter les tokens à la liste words, les patterns et
     # le tag associé à l'intention sont ajoutés aux listes correspondantes
-    for intent in data["intents"]:
+    for intent in intents:
         for pattern in intent["patterns"]:
             tokens = nltk.word_tokenize(pattern)
             words.extend(tokens)

@@ -16,6 +16,23 @@ import tensorflow as tf
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.layers import Dense, Dropout
 from fonctions.model import preprocess_sentence, get_response, getDataModel
+import pymongo
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+client_string = os.getenv("MONGODB_URL")
+db_string = os.getenv("DB_NAME")
+KEYCLOAK_URL = os.getenv("KEYCLOAK_URL")
+REALM_NAME = os.getenv("KEYCLOAK_REALM_NAME")
+ADMIN_USERNAME = os.getenv("KEYCLOAK_USER")
+ADMIN_PASSWORD = os.getenv("KEYCLOAK_PASSWORD")
+KEYCLOAK_CLIENT_NAME = os.getenv("KEYCLOAK_CLIENT_NAME")
+KEYCLOAK_CLIENT_SECRET = os.getenv("KEYCLOAK_CLIENT_SECRET")
+client = pymongo.MongoClient(client_string)
+db = client[db_string]
+collectionintents = db["intents"] 
+intents = collectionintents.find({})
 
 app = Flask(__name__)
 
@@ -46,10 +63,10 @@ app.config.update({
 })
 
 keycloak_openid = KeycloakOpenID(
-    server_url="http://localhost:9009/",
-    client_id="papyrus",
-    realm_name="papyrus",
-    client_secret_key="OCdDz9y5RtcLrsPry49bmka4iIE0p8vv"
+    server_url=KEYCLOAK_URL,
+    client_id=KEYCLOAK_CLIENT_NAME,
+    realm_name=REALM_NAME,
+    client_secret_key=KEYCLOAK_CLIENT_SECRET
 )
 
 
@@ -82,29 +99,31 @@ chatbot_namespace = Namespace('Chatbot', description='Chatbot endpoints')
 class ChatbotResource(Resource):
     @chatbot_namespace.expect(chatbot_model)
     def post(self):
-        chemin_intents_json = "./json/intents.json"
         question = chatbot_namespace.payload['question']
         model = load_model("./models/papyrusmodel.keras")
         processed_question = preprocess_sentence(question)
-        train_X, train_y = getDataModel(chemin_intents_json)
+        train_X, train_y = getDataModel()
         max_sequence_length = max(len(seq) for seq in train_X)
         input_data = get_response(processed_question,max_sequence_length)
         prediction = model.predict(np.array([input_data]))
         predicted_class_index = np.argmax(prediction)
-        with open(chemin_intents_json, 'r', encoding='utf-8') as file:
-            intents = json.load(file)
-        response = intents['intents'][predicted_class_index]['responses']
-        predictions = []
-        for index, (intent, score) in enumerate(zip(intents['intents'], prediction[0])):
-            rep = random.choice(intents['intents'][index]["responses"])
-            predictions.append({'tag': intents['intents'][index]["tag"], 'reponse': rep, 'score': float(score)})
-        sorted_predictions = sorted(predictions, key=lambda x: x['score'], reverse=True)
-        if sorted_predictions[0]["score"] < 0.55:
-            return jsonify({"reponse":{ "reponse": "Je n'ai pas compris.", "score": 0, "prediction":sorted_predictions[0] }})
-        else:  
-            return jsonify({"reponse":sorted_predictions[0]})     
+        confidence_scores = prediction[0].tolist()
+        confidence_score = np.max(prediction)
+        
+        index_to_tag = {}
+        for index, intent in enumerate(intents):
+            index_to_tag[index] = intent['tag']
+        predicted_tag = index_to_tag.get(predicted_class_index, "Unknown")
+        intent = collectionintents.find_one({"tag": predicted_tag})
+        responses = intent.get('responses', [])
+        
+        response_scores = [(response, score) for response, score in zip(responses, confidence_scores)]
+        response_scores.sort(key=lambda x: x[1], reverse=True)
+        top_5_responses = response_scores[:5]
+        response_table = [{"reponse": response, "score": score} for response, score in top_5_responses]
+        return jsonify({"reponses": response_table})     
     
 api.add_namespace(chatbot_namespace)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=FLASK_PORT)

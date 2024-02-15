@@ -1,0 +1,39 @@
+version: '3'
+
+services:
+  mongodb:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: papyrus_mongodb
+    ports:
+      - "27017:27017"
+
+  postgres:
+    image: postgres
+    container_name: papyrus_postgres
+    environment:
+      POSTGRES_PASSWORD: root
+      POSTGRES_USER: root
+      POSTGRES_DB: papyrus
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:legacy
+    container_name: papyrus_keycloak
+    environment:
+      DB_VENDOR: POSTGRES
+      DB_ADDR: postgres
+      DB_DATABASE: papyrus
+      DB_USER: root
+      DB_PASSWORD: root
+      KEYCLOAK_USER: user
+      KEYCLOAK_PASSWORD: bitnami
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:
