@@ -1,5 +1,8 @@
 models/*
 fonctions/__pycache__
+fonctions/__pycache__/*
 __pycache__
 .idea
-.vscode
+.vscode__pycache__/*
+.vscode/*
+.idea/*

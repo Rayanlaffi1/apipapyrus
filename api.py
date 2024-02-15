@@ -29,6 +29,7 @@ ADMIN_USERNAME = os.getenv("KEYCLOAK_USER")
 ADMIN_PASSWORD = os.getenv("KEYCLOAK_PASSWORD")
 KEYCLOAK_CLIENT_NAME = os.getenv("KEYCLOAK_CLIENT_NAME")
 KEYCLOAK_CLIENT_SECRET = os.getenv("KEYCLOAK_CLIENT_SECRET")
+FLASK_PORT = os.getenv("FLASK_PORT")
 client = pymongo.MongoClient(client_string)
 db = client[db_string]
 collectionintents = db["intents"] 
@@ -127,3 +128,5 @@ api.add_namespace(chatbot_namespace)
 
 if __name__ == '__main__':
     app.run(debug=True, port=FLASK_PORT)
+    # exec(open("loadmodel.py").read())
+    # app.run(debug=True)
