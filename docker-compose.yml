@@ -38,7 +38,7 @@ services:
   python_app:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.python
     container_name: papyrus_python_app
     ports:
       - "5000:5000"
