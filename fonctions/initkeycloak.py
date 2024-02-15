@@ -71,6 +71,4 @@ client = keycloak_admin.create_client(payload=client_data)
 client_id = keycloak_admin.get_client_id(CLIENT_NAME)
 new_secret = keycloak_admin.generate_client_secrets(client_id)
 
-
 clients_secret = keycloak_admin.get_client_secrets(client_id)['value']
-print(clients_secret)

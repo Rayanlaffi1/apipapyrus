@@ -35,5 +35,17 @@ services:
     depends_on:
       - postgres
 
+  python_app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: papyrus_python_app
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mongodb
+      - postgres
+      - keycloak
+
 volumes:
   postgres_data:

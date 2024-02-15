@@ -144,6 +144,8 @@ class ChatbotResource(Resource):
 api.add_namespace(chatbot_namespace)
 
 if __name__ == '__main__':
+    exec(open("./fonctions/initkeycloak.py").read())
+    exec(open("loadmodel.py").read())
     app.run(debug=True, port=FLASK_PORT)
     # exec(open("loadmodel.py").read())
     # app.run(debug=True)
