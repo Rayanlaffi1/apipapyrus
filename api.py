@@ -16,6 +16,7 @@ import tensorflow as tf
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.layers import Dense, Dropout
 from fonctions.model import preprocess_sentence, get_response, getDataModel
+from fonctions.initkeycloak import get_access_token, get_client_id,get_client_secret
 import pymongo
 import os
 from dotenv import load_dotenv
@@ -28,8 +29,17 @@ REALM_NAME = os.getenv("KEYCLOAK_REALM_NAME")
 ADMIN_USERNAME = os.getenv("KEYCLOAK_USER")
 ADMIN_PASSWORD = os.getenv("KEYCLOAK_PASSWORD")
 KEYCLOAK_CLIENT_NAME = os.getenv("KEYCLOAK_CLIENT_NAME")
-KEYCLOAK_CLIENT_SECRET = os.getenv("KEYCLOAK_CLIENT_SECRET")
 FLASK_PORT = os.getenv("FLASK_PORT")
+
+access_token = get_access_token(ADMIN_USERNAME, ADMIN_PASSWORD, "admin-cli", "")
+client_id = get_client_id()
+client_secret = get_client_secret()
+os.environ['KEYCLOAK_CLIENT_SECRET'] = client_secret
+os.environ['KEYCLOAK_CLIENT_ID'] = client_id
+KEYCLOAK_CLIENT_SECRET = os.getenv("KEYCLOAK_CLIENT_SECRET")
+KEYCLOAK_CLIENT_ID = os.getenv("KEYCLOAK_CLIENT_ID")
+print(KEYCLOAK_CLIENT_ID)
+
 client = pymongo.MongoClient(client_string)
 db = client[db_string]
 collectionintents = db["intents"] 
@@ -62,13 +72,20 @@ app.config.update({
     'TESTING': True,
     'DEBUG': True
 })
+os.system('cls')
 
+keycloak_auth=KEYCLOAK_URL+"/auth/"
 keycloak_openid = KeycloakOpenID(
-    server_url=KEYCLOAK_URL,
+    server_url=keycloak_auth,
     client_id=KEYCLOAK_CLIENT_NAME,
     realm_name=REALM_NAME,
     client_secret_key=KEYCLOAK_CLIENT_SECRET
 )
+try:
+    openid_configuration = keycloak_openid.well_known()
+    print("Keycloak connection setup is successful.")
+except Exception as e:
+    print("Error occurred during Keycloak connection setup:", e)
 
 
 login_model = api.model('Authentification', {
@@ -83,11 +100,11 @@ class LoginResource(Resource):
         username = login_namespace.payload['username']
         password = login_namespace.payload['password']
 
-        token = keycloak_openid.token(username, password)
+        token = keycloak_openid.token(username, password)  
         if token:
             return {'message': 'Connexion réussie', 'token': token}
         else:
-            return {'message': 'Connexion échouée'}, 401
+            return {'message': 'Connexion échouée', 'token': token}, 401
 
 api.add_namespace(login_namespace)
 
