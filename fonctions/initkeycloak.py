@@ -51,23 +51,23 @@ def get_client_secret():
     return clients_secret
 
 # keycloak_admin.delete_realm(REALM_NAME)
-realm_data = {
-    "realm": REALM_NAME,
-    "enabled": True
-}
-keycloak_admin.create_realm(realm_data)
-client_data = {
-    "clientId": CLIENT_NAME,
-    "enabled": True,
-    "redirectUris": ["*"],
-    "publicClient": True,
-    "standardFlowEnabled": True,
-    "implicitFlowEnabled": False,
-    "directAccessGrantsEnabled": True,
-    "serviceAccountsEnabled": False,
-}
 
 try:
+    realm_data = {
+        "realm": REALM_NAME,
+        "enabled": True
+    }
+    keycloak_admin.create_realm(realm_data)
+    client_data = {
+        "clientId": CLIENT_NAME,
+        "enabled": True,
+        "redirectUris": ["*"],
+        "publicClient": True,
+        "standardFlowEnabled": True,
+        "implicitFlowEnabled": False,
+        "directAccessGrantsEnabled": True,
+        "serviceAccountsEnabled": False,
+    }
     keycloak_admin.change_current_realm(REALM_NAME)
     client = keycloak_admin.create_client(payload=client_data)
     client_id = keycloak_admin.get_client_id(CLIENT_NAME)
