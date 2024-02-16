@@ -13,7 +13,7 @@ ADMIN_USERNAME = os.getenv("KEYCLOAK_USER")
 ADMIN_PASSWORD = os.getenv("KEYCLOAK_PASSWORD")
 
 keycloak_admin = KeycloakAdmin(
-    server_url=KEYCLOAK_URL+"/auth/",
+    server_url=KEYCLOAK_URL+"http://keycloak:8080/auth/",
     username=ADMIN_USERNAME,
     password=ADMIN_PASSWORD,
     realm_name='master',
