@@ -6,4 +6,4 @@ RUN git clone https://github.com/Rayanlaffi1/apipapyrus.git .
 RUN pip install -r requirements.txt
 CMD ["python", "./fonctions/initkeycloak.py"]
 CMD ["python", "api.py"]
-EXPOSE 5000
+EXPOSE 9005
