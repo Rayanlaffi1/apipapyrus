@@ -2,7 +2,8 @@ import json
 import logging
 import random
 from flask import Flask, jsonify, request, redirect, session, url_for, g
-from keycloak import KeycloakOpenID
+# from keycloak import KeycloakOpenID
+from keycloak.keycloak_openid import KeycloakOpenID
 import requests
 from flask import Flask
 from flask_cors import CORS
