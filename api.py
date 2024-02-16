@@ -80,7 +80,7 @@ app.config.update({
 })
 os.system('cls')
 
-keycloak_auth=KEYCLOAK_URL+"/auth/"
+keycloak_auth="http://keycloak:8080/auth/"
 keycloak_openid = KeycloakOpenID(
     server_url=keycloak_auth,
     client_id=KEYCLOAK_CLIENT_NAME,
