@@ -31,7 +31,6 @@ ADMIN_PASSWORD = os.getenv("KEYCLOAK_PASSWORD")
 KEYCLOAK_CLIENT_NAME = os.getenv("KEYCLOAK_CLIENT_NAME")
 FLASK_PORT = os.getenv("FLASK_PORT")
 
-
 exec(open("./fonctions/initkeycloak.py").read())
 exec(open("loadmodel.py").read())
 
