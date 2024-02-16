@@ -14,8 +14,6 @@ from nltk.stem import WordNetLemmatizer
 import string
 import numpy as np
 import tensorflow as tf 
-from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.layers import Dense, Dropout
 from fonctions.model import preprocess_sentence, get_response, getDataModel
 from fonctions.initkeycloak import get_access_token, get_client_id,get_client_secret
 import pymongo

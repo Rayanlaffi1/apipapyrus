@@ -52,6 +52,14 @@ def get_client_secret():
 
 # keycloak_admin.delete_realm(REALM_NAME)
 
+
+try:
+    realm = keycloak_admin.get_realm(REALM_NAME)
+    if realm is not None:
+        keycloak_admin.delete_realm(REALM_NAME)
+except Exception as e:
+    print("Une erreur s'est produite lors de la récupération ou de la suppression du realm :", e)
+
 try:
     realm_data = {
         "realm": REALM_NAME,
