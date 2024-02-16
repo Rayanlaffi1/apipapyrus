@@ -21,6 +21,10 @@ import pymongo
 import os
 from dotenv import load_dotenv
 
+import subprocess
+subprocess.run(["python", "fonctions/initkeycloak.py"])
+subprocess.run(["python", "loadmodel.py"])
+
 load_dotenv()
 client_string = os.getenv("MONGODB_URL")
 db_string = os.getenv("DB_NAME")
