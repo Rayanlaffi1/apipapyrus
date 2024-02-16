@@ -145,6 +145,6 @@ class ChatbotResource(Resource):
 api.add_namespace(chatbot_namespace)
 
 if __name__ == '__main__':
-    app.run(debug=True, port=FLASK_PORT)
+    app.run(debug=True, port=FLASK_PORT,host='0.0.0.0')
     # exec(open("loadmodel.py").read())
     # app.run(debug=True)
