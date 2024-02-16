@@ -67,9 +67,11 @@ client_data = {
     "serviceAccountsEnabled": False,
 }
 
-keycloak_admin.change_current_realm(REALM_NAME)
-client = keycloak_admin.create_client(payload=client_data)
-client_id = keycloak_admin.get_client_id(CLIENT_NAME)
-new_secret = keycloak_admin.generate_client_secrets(client_id)
-
-clients_secret = keycloak_admin.get_client_secrets(client_id)['value']
+try:
+    keycloak_admin.change_current_realm(REALM_NAME)
+    client = keycloak_admin.create_client(payload=client_data)
+    client_id = keycloak_admin.get_client_id(CLIENT_NAME)
+    new_secret = keycloak_admin.generate_client_secrets(client_id)
+    clients_secret = keycloak_admin.get_client_secrets(client_id)['value']
+except Exception as e:
+    print("Une erreur s'est produite lors de l'interaction avec Keycloak :", e)
