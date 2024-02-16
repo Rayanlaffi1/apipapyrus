@@ -21,9 +21,7 @@ from fonctions.initkeycloak import get_access_token, get_client_id,get_client_se
 import pymongo
 import os
 from dotenv import load_dotenv
-
 import subprocess
-subprocess.run(["python", "fonctions/initkeycloak.py"])
 subprocess.run(["python", "loadmodel.py"])
 
 load_dotenv()

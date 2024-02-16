@@ -50,7 +50,7 @@ def get_client_secret():
     clients_secret = keycloak_admin.get_client_secrets(client_id)['value']
     return clients_secret
 
-keycloak_admin.delete_realm(REALM_NAME)
+# keycloak_admin.delete_realm(REALM_NAME)
 realm_data = {
     "realm": REALM_NAME,
     "enabled": True
