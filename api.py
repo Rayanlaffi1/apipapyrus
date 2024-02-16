@@ -31,6 +31,10 @@ ADMIN_PASSWORD = os.getenv("KEYCLOAK_PASSWORD")
 KEYCLOAK_CLIENT_NAME = os.getenv("KEYCLOAK_CLIENT_NAME")
 FLASK_PORT = os.getenv("FLASK_PORT")
 
+
+exec(open("./fonctions/initkeycloak.py").read())
+exec(open("loadmodel.py").read())
+
 access_token = get_access_token(ADMIN_USERNAME, ADMIN_PASSWORD, "admin-cli", "")
 client_id = get_client_id()
 client_secret = get_client_secret()
@@ -144,8 +148,6 @@ class ChatbotResource(Resource):
 api.add_namespace(chatbot_namespace)
 
 if __name__ == '__main__':
-    exec(open("./fonctions/initkeycloak.py").read())
-    exec(open("loadmodel.py").read())
     app.run(debug=True, port=FLASK_PORT)
     # exec(open("loadmodel.py").read())
     # app.run(debug=True)
