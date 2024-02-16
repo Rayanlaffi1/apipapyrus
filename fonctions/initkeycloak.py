@@ -1,4 +1,5 @@
-from keycloak import KeycloakAdmin
+# from keycloak import KeycloakAdmin
+from keycloak.keycloak_admin import KeycloakAdmin
 import requests
 import json
 import os
