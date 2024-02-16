@@ -7,4 +7,4 @@ RUN pip install -r requirements.txt
 # CMD ["python", "./fonctions/initkeycloak.py"]
 # CMD ["python", "api.py"]
 CMD ["sh", "-c", "python ./fonctions/initkeycloak.py && python api.py"]
-EXPOSE 5000
+EXPOSE 80

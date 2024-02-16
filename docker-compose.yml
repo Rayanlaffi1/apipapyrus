@@ -47,7 +47,7 @@ services:
       dockerfile: Dockerfile.python
     container_name: papyrus_python_app
     ports:
-      - "9009:5000"
+      - "80:5000"
     depends_on:
       - mongodb
       - postgres
