@@ -132,7 +132,9 @@ class ChatbotResource(Resource):
         index_to_tag = {}
         for index, intent in enumerate(intents):
             index_to_tag[index] = intent['tag']
+        print(index_to_tag)
         predicted_tag = index_to_tag.get(predicted_class_index, "Unknown")
+        print(predicted_tag)
         intent = collectionintents.find_one({"tag": predicted_tag})
         responses = intent.get('responses', [])
         
