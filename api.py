@@ -39,7 +39,6 @@ os.environ['KEYCLOAK_CLIENT_SECRET'] = client_secret
 os.environ['KEYCLOAK_CLIENT_ID'] = client_id
 KEYCLOAK_CLIENT_SECRET = os.getenv("KEYCLOAK_CLIENT_SECRET")
 KEYCLOAK_CLIENT_ID = os.getenv("KEYCLOAK_CLIENT_ID")
-print(KEYCLOAK_CLIENT_ID)
 
 client = pymongo.MongoClient(client_string)
 db = client[db_string]
@@ -128,6 +127,9 @@ class ChatbotResource(Resource):
         predicted_class_index = np.argmax(prediction)
         confidence_scores = prediction[0].tolist()
         confidence_score = np.max(prediction)
+        
+        collectionintents = db["intents"] 
+        intents = collectionintents.find({})
         
         index_to_tag = {}
         for index, intent in enumerate(intents):
