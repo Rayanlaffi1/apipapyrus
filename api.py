@@ -134,16 +134,14 @@ class ChatbotResource(Resource):
         index_to_tag = {}
         for index, intent in enumerate(intents):
             index_to_tag[index] = intent['tag']
-        print(index_to_tag)
         predicted_tag = index_to_tag.get(predicted_class_index, "Unknown")
-        print(predicted_tag)
         intent = collectionintents.find_one({"tag": predicted_tag})
         responses = intent.get('responses', [])
         
         response_scores = [(response, score) for response, score in zip(responses, confidence_scores)]
         response_scores.sort(key=lambda x: x[1], reverse=True)
         top_5_responses = response_scores[:5]
-        response_table = [{"reponse": response, "score": score} for response, score in top_5_responses]
+        response_table = [{"reponse": response, "score": round(score, 2)} for response, score in top_5_responses]
         return jsonify({"reponses": response_table})     
     
 api.add_namespace(chatbot_namespace)
