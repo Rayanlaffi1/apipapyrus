@@ -113,10 +113,20 @@ chatbot_model = api.model('Chatbot', {
     'question': fields.String(required=True, description='Quelle est ton nom?'),
 })
 chatbot_namespace = Namespace('Chatbot', description='Chatbot endpoints')
+@chatbot_namespace.doc(security='bearerAuth')
 @chatbot_namespace.route('/chat')
 class ChatbotResource(Resource):
     @chatbot_namespace.expect(chatbot_model)
     def post(self):
+        if 'Authorization' not in request.headers:
+            return {'message': 'Authorization token missing'}, 401
+
+        auth_header = request.headers.get('Authorization')
+        token_type, token = auth_header.split()
+
+        if token_type.lower() != 'bearer':
+            return {'message': 'Invalid token type'}, 401
+        
         question = chatbot_namespace.payload['question']
         model = load_model("./models/papyrusmodel.keras")
         processed_question = preprocess_sentence(question)
