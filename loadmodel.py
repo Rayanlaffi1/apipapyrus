@@ -18,26 +18,18 @@ nltk.download("wordnet")
 
 train_X, train_y = getDataModel()
 
-# définition de quelques paramètres
 input_shape = (len(train_X[0]),)
 output_shape = len(train_y[0])
 epochs = 200
 
-# modèle Deep Learning
-model = Sequential()
-model.add(Dense(128, input_shape=input_shape, activation="relu"))
-model.add(Dropout(0.5))
-model.add(Dense(64, activation="relu"))
-model.add(Dropout(0.3))
-model.add(Dense(output_shape, activation = "softmax"))
-# adam = tf.keras.optimizers.legacy.Adam(learning_rate=0.01, decay=1e-6)
-adam = tf.keras.optimizers.Adam(learning_rate=0.01)
+model = Sequential() # squelette de base
+model.add(Dense(128, input_shape=input_shape, activation="relu")) # ajoute une couche au modèle de réseau de neurones 128 neurones 
+model.add(Dropout(0.5)) # aide pour pas qu'elle surapprend
+model.add(Dense(64, activation="relu")) # nouvelle couche de réseau de neurones
+model.add(Dropout(0.3)) # aide pour pas qu'elle surapprend
+model.add(Dense(output_shape, activation = "softmax")) # couche finale 
+adam = tf.keras.optimizers.Adam(learning_rate=0.01) # minimiser les pertes et améliorer les performances du modèle
 
 model.compile(loss='categorical_crossentropy', optimizer=adam, metrics=["accuracy"])
-
-print(model.summary())
-
-# entraînement du modèle
 model.fit(x=train_X, y=train_y, epochs=200, verbose=1)
-# Enregistrement du modèle
 model.save("./models/papyrusmodel.keras")

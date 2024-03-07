@@ -20,8 +20,6 @@ keycloak_admin = KeycloakAdmin(
     client_id='admin-cli',
     client_secret_key=None
 )
-# /auth/admin/realms/papyrus/clients?clientId=papyrus-client
-# /auth/admin/realms/papyrus/clients/158bd3ea-1a00-4314-98f3-ecf57028b1c4/client-secret
 
 def get_access_token(username, password, client_id, client_secret):
     url = f"{KEYCLOAK_URL}/auth/realms/master/protocol/openid-connect/token"
