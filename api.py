@@ -120,40 +120,37 @@ class ChatbotResource(Resource):
         token = request.headers.get('Authorization')
         if not token:
             return jsonify({'message': 'Token is missing'}), 401
-        try:
-            introspection = keycloak_openid.introspect(token)
-            if not introspection['active']:
-                return jsonify({'message': 'Token is invalid'}), 401
-            
-            question = chatbot_namespace.payload['question']
-            model = load_model("./models/papyrusmodel.keras")
-            processed_question = preprocess_sentence(question)
-            train_X, train_y = getDataModel()
-            max_sequence_length = max(len(seq) for seq in train_X)
-            input_data = get_response(processed_question,max_sequence_length)
-            prediction = model.predict(np.array([input_data]))
-            predicted_class_index = np.argmax(prediction)
-            confidence_scores = prediction[0].tolist()
-            confidence_score = np.max(prediction)
-            
-            collectionintents = db["intents"] 
-            intents = collectionintents.find({})
-            
-            index_to_tag = {}
-            for index, intent in enumerate(intents):
-                index_to_tag[index] = intent['tag']
-            predicted_tag = index_to_tag.get(predicted_class_index, "Unknown")
-            intent = collectionintents.find_one({"tag": predicted_tag})
-            responses = intent.get('responses', [])
-            
-            response_scores = [(response, score) for response, score in zip(responses, confidence_scores)]
-            response_scores.sort(key=lambda x: x[1], reverse=True)
-            top_5_responses = response_scores[:5]
-            response_table = [{"reponse": response, "score": round(score, 2)} for response, score in top_5_responses]
-            return jsonify({"reponses": response_table})    
         
-        except Exception as e:
-            return jsonify({'message': 'Error validating token', 'error': str(e)}), 401 
+        introspection = keycloak_openid.introspect(token)
+        if not introspection['active']:
+            return jsonify({'message': 'Token is invalid'}), 401
+        
+        question = chatbot_namespace.payload['question']
+        model = load_model("./models/papyrusmodel.keras")
+        processed_question = preprocess_sentence(question)
+        train_X, train_y = getDataModel()
+        max_sequence_length = max(len(seq) for seq in train_X)
+        input_data = get_response(processed_question,max_sequence_length)
+        prediction = model.predict(np.array([input_data]))
+        predicted_class_index = np.argmax(prediction)
+        confidence_scores = prediction[0].tolist()
+        confidence_score = np.max(prediction)
+        
+        collectionintents = db["intents"] 
+        intents = collectionintents.find({})
+        
+        index_to_tag = {}
+        for index, intent in enumerate(intents):
+            index_to_tag[index] = intent['tag']
+        predicted_tag = index_to_tag.get(predicted_class_index, "Unknown")
+        intent = collectionintents.find_one({"tag": predicted_tag})
+        responses = intent.get('responses', [])
+        
+        response_scores = [(response, score) for response, score in zip(responses, confidence_scores)]
+        response_scores.sort(key=lambda x: x[1], reverse=True)
+        top_5_responses = response_scores[:5]
+        response_table = [{"reponse": response, "score": round(score, 2)} for response, score in top_5_responses]
+        return jsonify({"reponses": response_table})    
     
 api.add_namespace(chatbot_namespace)
 
