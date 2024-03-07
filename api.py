@@ -117,14 +117,6 @@ chatbot_namespace = Namespace('Chatbot', description='Chatbot endpoints')
 class ChatbotResource(Resource):
     @chatbot_namespace.expect(chatbot_model)
     def post(self):
-        token = request.headers.get('Authorization')
-        if not token:
-            return jsonify({'message': 'Token is missing'}), 401
-        
-        introspection = keycloak_openid.introspect(token)
-        if not introspection['active']:
-            return jsonify({'message': 'Token is invalid'}), 401
-        
         question = chatbot_namespace.payload['question']
         model = load_model("./models/papyrusmodel.keras")
         processed_question = preprocess_sentence(question)
